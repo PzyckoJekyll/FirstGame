@@ -9,6 +9,7 @@ var GameState = {
   create: function(){
       this.background = this.game.add.sprite(0,0,'background');
       this.ken = this.game.add.sprite(this.world.centerX,this.world.centerY,'ken');
+      this.ken.ancor.setTo(0.5,0.5);
   },
   update: function(){
       
