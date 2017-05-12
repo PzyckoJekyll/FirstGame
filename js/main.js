@@ -10,6 +10,9 @@ var GameState = {
       this.background = this.game.add.sprite(0,0,'background');
       this.ken = this.game.add.sprite(this.world.centerX,this.world.centerY,'ken');
       this.ken.anchor.setTo(0.5,0.5);
+      this.raul = this.game.add.sprite(this.world.centerX,50,'raul');
+      this.raul.anchor.setTo(0.5,0.5);
+      this.raul.scale.setTo(0.3);
   },
   update: function(){
       
