@@ -20,7 +20,7 @@ var GameState = {
       game.load.image('spaceship','asset/images/spaceship.png');
       game.load.image('bullet','asset/images/laser.png');
       game.load.image('enemy','asset/images/enemy.png');
-      game.load.bitmapFont('desyrel', 'asset/fonts/bitmapFonts/font.png', 'asset/fonts/bitmapFonts/font.xml');
+      game.load.bitmapFont('desyrel', 'asset/fonts/bitmapFonts/font2.png', 'asset/fonts/bitmapFonts/font2.xml');
   },
 
   create: function(){
@@ -126,10 +126,10 @@ function collisionHandler(bullet,enemy){
 function screenWrap(ships) {
 
   if (ships.x < 0) {
-    ships.x = game.width;
-  }
-  else if (ships.x > game.width) {
     ships.x = 0;
+  }
+  else if (ships.x > game.width-139) {
+    ships.x =  game.width-139;
   }
 
   if (ships.y < 0) {
