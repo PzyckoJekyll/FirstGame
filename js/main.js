@@ -5,13 +5,14 @@ var ships;
 var cursors;
 var bullets;
 var bulletsTime = 0;
+var enemyBullets;
+var enemyBulletsTime = 0;
 var fireButton;
 var enemies;
 var score = 0;
 var scoreText;
 var winText;
-
-
+var loseText;
 
 var GameState = {
   
@@ -39,6 +40,15 @@ var GameState = {
       bullets.setAll('outOfBoundsKill',true);
       bullets.setAll('checkWorldBounds', true);
 
+      enemyBullets = game.add.group();
+      enemyBullets.enableBody = true;
+      enemyBullets.physicsBodyType = Phaser.Physics.ARCADE;
+      enemyBullets.createMultiple(30,'bullet');
+      enemyBullets.setAll('anchor.x',0.5);
+      enemyBullets.setAll('anchor.y',1);
+      enemyBullets.setAll('outOfBoundsKill',true);
+      enemyBullets.setAll('checkWorldBounds', true);
+
       fireButton = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
        
       enemies = game.add.group();
@@ -50,12 +60,17 @@ var GameState = {
       //scoreText = game.add.bitmapText(game.width-250, 50, 'desyrel', 'Score:', 32);
       winText= game.add.bitmapText(200, 100, 'desyrel', 'You Win!', 64);
       winText.visible=false;
+      loseText= game.add.bitmapText(game.world.centerX ,game.world.centerY , 'desyrel', 'You Lose!', 100);
+      loseText.anchor.setTo(0.5, 0.5);
+      loseText.visible=false;
+      
       
   },
 
   update: function(){
 
       game.physics.arcade.overlap(bullets,enemies,collisionHandler,null,this);
+      game.physics.arcade.overlap(ships,enemyBullets,enemyCollisionHandler,null,this);
 
       field.tilePosition.y +=backgroundv;
       ships.body.velocity.x =0;
@@ -78,8 +93,10 @@ var GameState = {
          winText.visible=true;
         
      }
-
-      screenWrap(ships) ;
+     
+     enemyFireBullet(enemies);
+     
+     screenWrap(ships) ;
       
   } 
 
@@ -92,6 +109,23 @@ function fireBullet(){
             bullet.reset(ships.x+70,ships.y);
             bullet.body.velocity.y = -400;
             bulletsTime = game.time.now + 150;
+        }
+
+    }
+};
+
+function enemyFireBullet(enemies){
+    if (game.time.now > enemyBulletsTime){
+        enemy= null;
+        enemy= enemies.getChildAt(Math.floor(Math.random() * (39)) + 0);
+        enemyBullet = enemyBullets.getFirstExists(false);
+
+        if(Math.floor(Math.random() * (39))>37){
+        if(enemyBullet){
+            enemyBullet.reset(enemy.x+70,enemy.y);
+            enemyBullet.body.velocity.y = 240;
+            enemyBulletsTime = game.time.now + 150;
+        }
         }
 
     }
@@ -114,13 +148,20 @@ function createEnemies(){
 
 function descend(){
     enemies.y +=10;
-}
+};
 
 function collisionHandler(bullet,enemy){
     bullet.kill();
     enemy.kill();
 
     score += 100;
+};
+
+function enemyCollisionHandler(ships,enemyBullet){
+    ships.kill();
+    enemyBullet.kill();
+    loseText.visible=true;
+
 };
 
 function screenWrap(ships) {
