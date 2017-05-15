@@ -4,9 +4,14 @@ var backgroundv;
 var ships;
 var cursors;
 var bullets;
-var bulletsTime=0;
+var bulletsTime = 0;
 var fireButton;
 var enemies;
+var score = 0;
+var scoreText;
+var winText;
+
+
 
 var GameState = {
   
@@ -15,7 +20,7 @@ var GameState = {
       game.load.image('spaceship','asset/images/spaceship.png');
       game.load.image('bullet','asset/images/laser.png');
       game.load.image('enemy','asset/images/enemy.png');
-      
+      game.load.bitmapFont('desyrel', 'asset/fonts/bitmapFonts/font.png', 'asset/fonts/bitmapFonts/font.xml');
   },
 
   create: function(){
@@ -42,6 +47,10 @@ var GameState = {
 
       createEnemies();
 
+      //scoreText = game.add.bitmapText(game.width-250, 50, 'desyrel', 'Score:', 32);
+      winText= game.add.bitmapText(200, 100, 'desyrel', 'You Win!', 64);
+      winText.visible=false;
+      
   },
 
   update: function(){
@@ -62,6 +71,14 @@ var GameState = {
           fireBullet();
       }
 
+      //scoreText.text = 'Score: ' + score;
+
+     if(score == 4000){
+         //scoreText.visible=false;
+         winText.visible=true;
+        
+     }
+
       screenWrap(ships) ;
       
   } 
@@ -74,7 +91,7 @@ function fireBullet(){
         if(bullet){
             bullet.reset(ships.x+70,ships.y);
             bullet.body.velocity.y = -400;
-            bulletsTime = game.time.now + 200;
+            bulletsTime = game.time.now + 150;
         }
 
     }
@@ -102,6 +119,8 @@ function descend(){
 function collisionHandler(bullet,enemy){
     bullet.kill();
     enemy.kill();
+
+    score += 100;
 };
 
 function screenWrap(ships) {
