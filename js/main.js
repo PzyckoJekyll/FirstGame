@@ -13,6 +13,7 @@ var score = 0;
 var scoreText;
 var winText;
 var loseText;
+var stillBallin = true;
 
 var GameState = {
   
@@ -20,6 +21,7 @@ var GameState = {
       game.load.image('stars','asset/images/background.png');
       game.load.image('spaceship','asset/images/spaceship.png');
       game.load.image('bullet','asset/images/laser.png');
+      game.load.image('herobullet','asset/images/herolaser.png');
       game.load.image('enemy','asset/images/enemy.png');
       game.load.bitmapFont('desyrel', 'asset/fonts/bitmapFonts/font2.png', 'asset/fonts/bitmapFonts/font2.xml');
   },
@@ -34,7 +36,7 @@ var GameState = {
       bullets = game.add.group();
       bullets.enableBody = true;
       bullets.physicsBodyType = Phaser.Physics.ARCADE;
-      bullets.createMultiple(30,'bullet');
+      bullets.createMultiple(30,'herobullet');
       bullets.setAll('anchor.x',0.5);
       bullets.setAll('anchor.y',1);
       bullets.setAll('outOfBoundsKill',true);
@@ -55,7 +57,9 @@ var GameState = {
       enemies.enableBody = true;
       enemies.physicsBodyType = Phaser.Physics.ARCADE;
 
-      createEnemies();
+      if(stillBallin){
+        createEnemies();    
+      }
 
       //scoreText = game.add.bitmapText(game.width-250, 50, 'desyrel', 'Score:', 32);
       winText= game.add.bitmapText(200, 100, 'desyrel', 'You Win!', 64);
@@ -83,19 +87,22 @@ var GameState = {
       }
 
       if(fireButton.isDown){
+        if(stillBallin){
           fireBullet();
+        }
       }
 
       //scoreText.text = 'Score: ' + score;
 
      if(score == 4000){
          //scoreText.visible=false;
+         stillBallin=false;
          winText.visible=true;
         
      }
-     
-     enemyFireBullet(enemies);
-     
+     if(stillBallin){
+        enemyFireBullet(enemies);
+     }
      screenWrap(ships) ;
       
   } 
@@ -106,7 +113,7 @@ function fireBullet(){
     if (game.time.now > bulletsTime){
         bullet = bullets.getFirstExists(false);
         if(bullet){
-            bullet.reset(ships.x+70,ships.y);
+            bullet.reset(ships.x+38,ships.y);
             bullet.body.velocity.y = -400;
             bulletsTime = game.time.now + 150;
         }
@@ -122,7 +129,7 @@ function enemyFireBullet(enemies){
 
         if(Math.floor(Math.random() * (39))>37){
         if(enemyBullet){
-            enemyBullet.reset(enemy.x+70,enemy.y);
+            enemyBullet.reset(enemy.x+15,enemy.y);
             enemyBullet.body.velocity.y = 240;
             enemyBulletsTime = game.time.now + 150;
         }
@@ -141,9 +148,11 @@ function createEnemies(){
 
     enemies.x = 100;
     enemies.x = 50;
-
-    var tween = game.add.tween(enemies).to({x:200},2000,Phaser.Easing.Linear.None, true,0,1000,true);
-    tween.onRepeat.add(descend,this);
+    
+    if(stillBallin){
+        var tween = game.add.tween(enemies).to({x:200},2000,Phaser.Easing.Linear.None, true,0,1000,true);
+        tween.onRepeat.add(descend,this);
+    }
 };
 
 function descend(){
@@ -161,6 +170,7 @@ function enemyCollisionHandler(ships,enemyBullet){
     ships.kill();
     enemyBullet.kill();
     loseText.visible=true;
+    stillBallin=false;
 
 };
 
