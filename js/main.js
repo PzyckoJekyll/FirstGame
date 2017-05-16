@@ -11,6 +11,7 @@ var fireButton;
 var enemies;
 var score = 0;
 var scoreText;
+var scoreFont;
 var winText;
 var loseText;
 var restartText;
@@ -62,8 +63,12 @@ var GameState = {
         createEnemies();    
       }
 
-      scoreText = game.add.bitmapText(game.width-250, 50, 'desyrel', 'Score:', 32);
-      scoreText.visible=false;
+    //   scoreText = game.add.bitmapText(game.width-250, 50, 'desyrel', 'Score:', 32);
+    //   scoreText.visible=false;
+
+      scoreText = "Score: 0";
+      scoreFont = this.game.add.bitmapText(32, 32, 'desyrel', scoreText, 32);
+
       winText= game.add.bitmapText(game.world.centerX ,game.world.centerY-200 , 'desyrel', 'You Win!', 100);
       winText.anchor.setTo(0.5, 0.5);     
       winText.visible=false;
@@ -100,7 +105,8 @@ var GameState = {
         }
       }
 
-      scoreText.text="Score" + score + " ";
+      
+      //scoreText.text="Score" + score + " ";
 
      if(score == 4000){
          scoreText.visible=false;
@@ -173,6 +179,8 @@ function collisionHandler(bullet,enemy){
     enemy.kill();
 
     score += 100;
+    scoreText = "Score: " + score.toString();
+    scoreFont.text = scoreText;
 };
 
 function enemyCollisionHandler(ships,enemyBullet){
