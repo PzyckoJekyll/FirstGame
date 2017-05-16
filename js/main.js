@@ -25,7 +25,7 @@ var GameState = {
       game.load.image('bullet','asset/images/laser.png');
       game.load.image('herobullet','asset/images/herolaser.png');
       game.load.image('enemy','asset/images/enemy.png');
-      game.load.bitmapFont('desyrel', 'asset/fonts/bitmapFonts/font2.png', 'asset/fonts/bitmapFonts/font2.xml');
+      game.load.bitmapFont('desyrel', 'asset/fonts/bitmapFonts/font.png', 'asset/fonts/bitmapFonts/font.xml');
   },
 
   create: function(){
@@ -67,15 +67,15 @@ var GameState = {
     //   scoreText.visible=false;
 
       scoreText = "Score: 0";
-      scoreFont = this.game.add.bitmapText(32, 32, 'desyrel', scoreText, 32);
-
+      scoreFont = this.game.add.bitmapText(800, 600, 'desyrel', scoreText, 32);
+      scoreFont.anchor.setTo(1, 1);   
       winText= game.add.bitmapText(game.world.centerX ,game.world.centerY-200 , 'desyrel', 'You Win!', 100);
       winText.anchor.setTo(0.5, 0.5);     
       winText.visible=false;
       loseText= game.add.bitmapText(game.world.centerX ,game.world.centerY-200  , 'desyrel', 'You Lose!', 100);
       loseText.anchor.setTo(0.5, 0.5);
       loseText.visible=false;
-      restartText= game.add.bitmapText(game.world.centerX ,game.world.centerY , 'desyrel', 'Still Ballin\'?', 60);
+      restartText= game.add.bitmapText(game.world.centerX ,game.world.centerY , 'desyrel', 'Still Ballin\'?\n  click here', 60);
       restartText.anchor.setTo(0.5, 0.5);
       restartText.visible=false;
 
@@ -181,6 +181,7 @@ function collisionHandler(bullet,enemy){
     score += 100;
     scoreText = "Score: " + score.toString();
     scoreFont.text = scoreText;
+ 
 };
 
 function enemyCollisionHandler(ships,enemyBullet){
