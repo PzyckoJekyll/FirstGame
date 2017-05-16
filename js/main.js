@@ -13,6 +13,7 @@ var score = 0;
 var scoreText;
 var winText;
 var loseText;
+var restartText;
 var stillBallin = true;
 
 var GameState = {
@@ -61,13 +62,20 @@ var GameState = {
         createEnemies();    
       }
 
-      //scoreText = game.add.bitmapText(game.width-250, 50, 'desyrel', 'Score:', 32);
-      winText= game.add.bitmapText(200, 100, 'desyrel', 'You Win!', 64);
+      scoreText = game.add.bitmapText(game.width-250, 50, 'desyrel', 'Score:', 32);
+      scoreText.visible=false;
+      winText= game.add.bitmapText(game.world.centerX ,game.world.centerY-200 , 'desyrel', 'You Win!', 100);
+      winText.anchor.setTo(0.5, 0.5);     
       winText.visible=false;
-      loseText= game.add.bitmapText(game.world.centerX ,game.world.centerY , 'desyrel', 'You Lose!', 100);
+      loseText= game.add.bitmapText(game.world.centerX ,game.world.centerY-200  , 'desyrel', 'You Lose!', 100);
       loseText.anchor.setTo(0.5, 0.5);
       loseText.visible=false;
-      
+      restartText= game.add.bitmapText(game.world.centerX ,game.world.centerY , 'desyrel', 'Still Ballin\'?', 60);
+      restartText.anchor.setTo(0.5, 0.5);
+      restartText.visible=false;
+
+      restartText.inputEnabled = true;
+      restartText.events.onInputDown.add(restart, this);
       
   },
 
@@ -92,12 +100,13 @@ var GameState = {
         }
       }
 
-      //scoreText.text = 'Score: ' + score;
+      scoreText.text="Score" + score + " ";
 
      if(score == 4000){
-         //scoreText.visible=false;
+         scoreText.visible=false;
          stillBallin=false;
          winText.visible=true;
+         restartText.visible=true;
         
      }
      if(stillBallin){
@@ -127,7 +136,7 @@ function enemyFireBullet(enemies){
         enemy= enemies.getChildAt(Math.floor(Math.random() * (39)) + 0);
         enemyBullet = enemyBullets.getFirstExists(false);
 
-        if(Math.floor(Math.random() * (39))>37){
+        if(Math.floor(Math.random() * (39))>35){
         if(enemyBullet){
             enemyBullet.reset(enemy.x+15,enemy.y);
             enemyBullet.body.velocity.y = 240;
@@ -167,10 +176,14 @@ function collisionHandler(bullet,enemy){
 };
 
 function enemyCollisionHandler(ships,enemyBullet){
-    ships.kill();
-    enemyBullet.kill();
-    loseText.visible=true;
+    if(stillBallin){
+      ships.kill();
+      enemyBullet.kill();
+      loseText.visible=true;
+    }
+   
     stillBallin=false;
+    restartText.visible=true;
 
 };
 
@@ -189,9 +202,17 @@ function screenWrap(ships) {
   else if (ships.y > game.height) {
     ships.y = 0;
   }
-
+  
 };
 
+function restart(){
+   bulletsTime = 0;
+   enemyBulletsTime = 0;
+   score = 0;
+
+   stillBallin = true;
+   game.state.start('GameState');
+}
 game.state.add('GameState',GameState);
 game.state.start('GameState');
 
