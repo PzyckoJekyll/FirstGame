@@ -1,4 +1,5 @@
 var game = new Phaser.Game(800, 600, Phaser.CANVAS, 'game');
+
 var field;
 var backgroundv;
 var ships;
@@ -17,9 +18,8 @@ var winText;
 var loseText;
 var restartText;
 var stillBallin = true;
-var enemiesNumber = 39;
-
 var livingEnemies = [];
+
 var GameState = {
   
   preload: function(){
@@ -32,6 +32,7 @@ var GameState = {
   },
 
   create: function(){
+
       field = game.add.tileSprite(0,0,800,600,'stars');    
       backgroundv=2;
       ships = game.add.sprite(game.world.centerX ,game.world.centerY + 200 ,'spaceship');
@@ -66,22 +67,21 @@ var GameState = {
         createEnemies();    
       }
 
-    //   scoreText = game.add.bitmapText(game.width-250, 50, 'desyrel', 'Score:', 32);
-    //   scoreText.visible=false;
-
       scoreText = "Score: 0";
       scoreFont = this.game.add.bitmapText(800, 600, 'desyrel', scoreText, 32);
       scoreFont.anchor.setTo(1, 1);   
+      
       winText= game.add.bitmapText(game.world.centerX ,game.world.centerY-200 , 'desyrel', 'You Win!', 100);
       winText.anchor.setTo(0.5, 0.5);     
       winText.visible=false;
+      
       loseText= game.add.bitmapText(game.world.centerX ,game.world.centerY-200  , 'desyrel', 'You Lose!', 100);
       loseText.anchor.setTo(0.5, 0.5);
       loseText.visible=false;
+      
       restartText= game.add.bitmapText(game.world.centerX ,game.world.centerY , 'desyrel', 'Still Ballin\'?\n  click here', 60);
       restartText.anchor.setTo(0.5, 0.5);
       restartText.visible=false;
-
       restartText.inputEnabled = true;
       restartText.events.onInputDown.add(restart, this);
       
@@ -94,6 +94,7 @@ var GameState = {
 
       field.tilePosition.y +=backgroundv;
       ships.body.velocity.x =0;
+
       if(cursors.left.isDown){
           ships.body.velocity.x = -350;
       }
@@ -108,9 +109,6 @@ var GameState = {
         }
       }
 
-      
-      //scoreText.text="Score" + score + " ";
-
      if(score == 4000){
          scoreText.visible=false;
          stillBallin=false;
@@ -118,9 +116,11 @@ var GameState = {
          restartText.visible=true;
         
      }
+
      if(stillBallin){
         enemyFireBullet(enemies);
      }
+
      screenWrap(ships) ;
       
   } 
@@ -135,7 +135,6 @@ function fireBullet(){
             bullet.body.velocity.y = -400;
             bulletsTime = game.time.now + 150;
         }
-
     }
 };
 
@@ -164,19 +163,12 @@ function enemyFireBullet(enemies){
             enemyBullet.reset(shooter.body.x+15, shooter.body.y+26);
 
             game.physics.arcade.moveToObject(enemyBullet,ships,120);
+            //enemyBullet.body.velocity.y = 240;
+
             enemyBulletsTime = game.time.now + 150;
 
-     //     enemyBullet.reset(enemy.x+15,enemy.y);
-     //     enemyBullet.body.velocity.y = 240;
-     //     enemyBulletsTime = game.time.now + 150;
-       
-
-           }
-            
+           }   
         }
-      
-        
-
     }
 };
 
@@ -209,7 +201,6 @@ function collisionHandler(bullet,enemy){
     bullet.kill();
     enemy.kill();
     enemies.remove(enemy);
-    enemiesNumber-=1;
     score += 100;
     scoreText = "Score: " + score.toString();
     scoreFont.text = scoreText;
