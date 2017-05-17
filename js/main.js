@@ -141,7 +141,7 @@ function fireBullet(){
 
 function enemyFireBullet(enemies){
     if (game.time.now > enemyBulletsTime){
-        enemy= enemies.getChildAt(Math.floor(Math.random() * (enemiesNumber)) + 0);
+        //enemy= enemies.getChildAt(Math.floor(Math.random() * (enemiesNumber)) + 0);
         enemyBullet = enemyBullets.getFirstExists(false);
 
         livingEnemies.length=0;
