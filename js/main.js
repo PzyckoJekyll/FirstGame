@@ -9,6 +9,7 @@ var enemyBullets;
 var enemyBulletsTime = 0;
 var fireButton;
 var enemies;
+var enemy=null;
 var score = 0;
 var scoreText;
 var scoreFont;
@@ -16,7 +17,9 @@ var winText;
 var loseText;
 var restartText;
 var stillBallin = true;
+var enemiesNumber = 39;
 
+var livingEnemies = [];
 var GameState = {
   
   preload: function(){
@@ -138,17 +141,41 @@ function fireBullet(){
 
 function enemyFireBullet(enemies){
     if (game.time.now > enemyBulletsTime){
-        enemy= null;
-        enemy= enemies.getChildAt(Math.floor(Math.random() * (39)) + 0);
+        enemy= enemies.getChildAt(Math.floor(Math.random() * (enemiesNumber)) + 0);
         enemyBullet = enemyBullets.getFirstExists(false);
 
-        if(Math.floor(Math.random() * (39))>35){
-        if(enemyBullet){
-            enemyBullet.reset(enemy.x+15,enemy.y);
-            enemyBullet.body.velocity.y = 240;
+        livingEnemies.length=0;
+
+        enemies.forEachAlive(function(enemy){
+
+        // put every living enemy in an array
+        livingEnemies.push(enemy);
+        });
+
+        if (enemyBullet && livingEnemies.length > 0)
+        {
+            if(Math.floor(Math.random() * (50))>48){
+            var random=game.rnd.integerInRange(0,livingEnemies.length-1);
+
+            // randomly select one of them
+            var shooter=livingEnemies[random];
+
+            // And fire the bullet from this enemy
+            enemyBullet.reset(shooter.body.x+15, shooter.body.y+26);
+
+            game.physics.arcade.moveToObject(enemyBullet,ships,120);
             enemyBulletsTime = game.time.now + 150;
+
+     //     enemyBullet.reset(enemy.x+15,enemy.y);
+     //     enemyBullet.body.velocity.y = 240;
+     //     enemyBulletsTime = game.time.now + 150;
+       
+
+           }
+            
         }
-        }
+      
+        
 
     }
 };
@@ -160,11 +187,15 @@ function createEnemies(){
             enemy.anchor.setTo(0.5, 0.5);
         }
     }
-
     enemies.x = 100;
-    enemies.x = 50;
+    enemies.y = 50;
     
     if(stillBallin){
+      
+        enemy.animations.add('fly', [ 0, 1, 2, 3 ], 20, true);
+        enemy.play('fly');
+        enemy.body.moves = false;
+
         var tween = game.add.tween(enemies).to({x:200},2000,Phaser.Easing.Linear.None, true,0,1000,true);
         tween.onRepeat.add(descend,this);
     }
@@ -177,7 +208,8 @@ function descend(){
 function collisionHandler(bullet,enemy){
     bullet.kill();
     enemy.kill();
-
+    enemies.remove(enemy);
+    enemiesNumber-=1;
     score += 100;
     scoreText = "Score: " + score.toString();
     scoreFont.text = scoreText;
