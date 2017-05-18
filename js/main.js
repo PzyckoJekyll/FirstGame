@@ -103,7 +103,9 @@ var GameState = {
       heroBlaster = game.add.audio('heroBlaster');
       gameOver = game.add.audio('gameOver');
       spaceSound = game.add.audio('spaceSound');
+      spaceSound.volume = 0.4;
       victory = game.add.audio('victory');
+      
       game.sound.setDecodedCallback([ explosion, heroBlaster, gameOver, spaceSound, victory], start, this);
       
       
