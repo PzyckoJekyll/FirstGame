@@ -24,6 +24,7 @@ var heroBlaster;
 var enemyDeth;
 var gameOver;
 var spaceSound;
+var victory;
 
 var GameState = {
   
@@ -33,6 +34,7 @@ var GameState = {
       game.load.audio('heroBlaster', 'asset/sounds/heroBlaster.mp3');
       game.load.audio('enemyDeth', 'asset/sounds/enemyDeth.wav');
       game.load.audio('spaceSound', 'asset/sounds/spaceSound.mp3');
+      game.load.audio('victory', 'asset/sounds/victory.mp3');
 
       game.load.image('stars','asset/images/background.png');
       game.load.image('spaceship','asset/images/spaceship.png');
@@ -101,14 +103,15 @@ var GameState = {
       heroBlaster = game.add.audio('heroBlaster');
       gameOver = game.add.audio('gameOver');
       spaceSound = game.add.audio('spaceSound');
-      game.sound.setDecodedCallback([ explosion, heroBlaster, gameOver, spaceSound], start, this);
+      victory = game.add.audio('victory');
+      game.sound.setDecodedCallback([ explosion, heroBlaster, gameOver, spaceSound, victory], start, this);
       
       
   },
 
   update: function(){
       spaceSound.play();
-
+      
       game.physics.arcade.overlap(bullets,enemies,collisionHandler,null,this);
       game.physics.arcade.overlap(ships,enemyBullets,enemyCollisionHandler,null,this);
 
@@ -128,13 +131,15 @@ var GameState = {
           fireBullet();
         }
       }
-
-     if(score == 4000){
-         scoreText.visible=false;
-         stillBallin=false;
-         winText.visible=true;
-         restartText.visible=true;
-        
+     
+     if(stillBallin){
+        if(score == 4000){
+            scoreText.visible=false;
+            stillBallin=false;
+            winText.visible=true;
+            restartText.visible=true;
+            victory.play();
+        }
      }
 
      if(stillBallin){
