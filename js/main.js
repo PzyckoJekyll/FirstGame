@@ -19,10 +19,21 @@ var loseText;
 var restartText;
 var stillBallin = true;
 var livingEnemies = [];
+var explosion;
+var heroBlaster;
+var enemyDeth;
+var gameOver;
+var spaceSound;
 
 var GameState = {
   
   preload: function(){
+      game.load.audio('explosion', 'asset/sounds/explosion.mp3');
+      game.load.audio('gameOver', 'asset/sounds/gameOver.mp3');
+      game.load.audio('heroBlaster', 'asset/sounds/heroBlaster.mp3');
+      game.load.audio('enemyDeth', 'asset/sounds/enemyDeth.wav');
+      game.load.audio('spaceSound', 'asset/sounds/spaceSound.mp3');
+
       game.load.image('stars','asset/images/background.png');
       game.load.image('spaceship','asset/images/spaceship.png');
       game.load.image('bullet','asset/images/laser.png');
@@ -75,7 +86,7 @@ var GameState = {
       winText.anchor.setTo(0.5, 0.5);     
       winText.visible=false;
       
-      loseText= game.add.bitmapText(game.world.centerX ,game.world.centerY-200  , 'desyrel', 'You Lose!', 100);
+      loseText= game.add.bitmapText(game.world.centerX ,game.world.centerY-200  , 'desyrel', 'Game Over!', 80);
       loseText.anchor.setTo(0.5, 0.5);
       loseText.visible=false;
       
@@ -84,10 +95,19 @@ var GameState = {
       restartText.visible=false;
       restartText.inputEnabled = true;
       restartText.events.onInputDown.add(restart, this);
+
+      explosion = game.add.audio('explosion');
+      enemyDeth = game.add.audio('enemyDeth');
+      heroBlaster = game.add.audio('heroBlaster');
+      gameOver = game.add.audio('gameOver');
+      spaceSound = game.add.audio('spaceSound');
+      game.sound.setDecodedCallback([ explosion, heroBlaster, gameOver, spaceSound], start, this);
+      
       
   },
 
   update: function(){
+      spaceSound.play();
 
       game.physics.arcade.overlap(bullets,enemies,collisionHandler,null,this);
       game.physics.arcade.overlap(ships,enemyBullets,enemyCollisionHandler,null,this);
@@ -129,18 +149,20 @@ var GameState = {
 
 function fireBullet(){
     if (game.time.now > bulletsTime){
+        
         bullet = bullets.getFirstExists(false);
         if(bullet){
             bullet.reset(ships.x+38,ships.y);
             bullet.body.velocity.y = -400;
             bulletsTime = game.time.now + 150;
+            heroBlaster.play();
         }
     }
 };
 
 function enemyFireBullet(enemies){
     if (game.time.now > enemyBulletsTime){
-        //enemy= enemies.getChildAt(Math.floor(Math.random() * (enemiesNumber)) + 0);
+        
         enemyBullet = enemyBullets.getFirstExists(false);
 
         livingEnemies.length=0;
@@ -153,7 +175,7 @@ function enemyFireBullet(enemies){
 
         if (enemyBullet && livingEnemies.length > 0)
         {
-            if(Math.floor(Math.random() * (50))>48){
+            if(Math.floor(Math.random() * (50))>47){
             var random=game.rnd.integerInRange(0,livingEnemies.length-1);
 
             // randomly select one of them
@@ -162,7 +184,7 @@ function enemyFireBullet(enemies){
             // And fire the bullet from this enemy
             enemyBullet.reset(shooter.body.x+15, shooter.body.y+26);
 
-            game.physics.arcade.moveToObject(enemyBullet,ships,120);
+            game.physics.arcade.moveToObject(enemyBullet,ships,130);
             //enemyBullet.body.velocity.y = 240;
 
             enemyBulletsTime = game.time.now + 150;
@@ -204,7 +226,7 @@ function collisionHandler(bullet,enemy){
     score += 100;
     scoreText = "Score: " + score.toString();
     scoreFont.text = scoreText;
- 
+    enemyDeth.play();
 };
 
 function enemyCollisionHandler(ships,enemyBullet){
@@ -212,10 +234,13 @@ function enemyCollisionHandler(ships,enemyBullet){
       ships.kill();
       enemyBullet.kill();
       loseText.visible=true;
+      explosion.play();
+      gameOver.play();
     }
    
     stillBallin=false;
     restartText.visible=true;
+    
 
 };
 
